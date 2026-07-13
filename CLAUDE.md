@@ -2,7 +2,7 @@
 
 ## Estado actual (2026-07-13)
 
-Sitio en desarrollo activo con contenido real cargado: textos institucionales del dueño, imagen del portal en el hero, plano de mensura real replicado como SVG interactivo, y diagrama de distancias nativo. Ver `ROADMAP.md` para fases y pendientes.
+Sitio en desarrollo activo con contenido real cargado: textos institucionales del dueño, imagen del portal en el hero, plano de mensura real replicado como SVG interactivo, diagrama de distancias nativo, carousel Perspectivas con renders del parque y sección Características rediseñada (ícono + título, sin cajas). Ver `ROADMAP.md` para fases y pendientes.
 
 ## Qué es
 
@@ -25,11 +25,12 @@ npm run build    # build de producción
 
 ## Estructura de páginas y componentes
 
-- `pages/Inicio.jsx` — hero + Motivación + Ubicación + Características.
+- `pages/Inicio.jsx` — hero + Motivación + Ubicación + Perspectivas + Características.
   - **Hero**: pantalla completa con foto del portal (`public/media/hero-portal.jpg`) + overlay oscuro y zoom lento. El scroll dentro del hero avanza por **pasos discretos** (banner → 4 párrafos institucionales) con crossfade; captura wheel/touch hasta agotar los pasos. Franja `hero-fundido` degrada la foto hacia el fondo de página.
   - **Motivación**: texto justificado (máx. 760px), con espacio previsto para una imagen a su izquierda (pendiente).
   - **Ubicación**: imagen satelital del padrón 166293 enmarcada (borde blanco fino) que linkea a Google Maps (**TODO: reemplazar por el pin exacto**, hoy es una búsqueda aproximada) + `MapaDistancias.jsx`, diagrama SVG nativo con hover que dibuja la ruta y muestra los km.
-  - **Características**: `CaracteristicasParque.jsx`, 9 cards con íconos SVG lineales.
+  - **Perspectivas**: `Perspectivas.jsx`, carousel de 9 renders (`public/media/perspectivas/`) con frase superpuesta abajo a la izquierda sobre degradé. Autoplay de 6 s (se pausa con hover/focus/fuera de viewport), crossfade direccional con framer-motion, swipe, flechas de teclado, flechas de texto superpuestas a los laterales de la imagen, e indicadores de línea + contador debajo. La frase va en una sola línea en desktop (≥861px) y envuelve en pantallas chicas.
+  - **Características**: `CaracteristicasParque.jsx`, 9 ítems en grilla de 3 columnas, sin caja ni líneas: ícono SVG lineal a la izquierda + título al lado. Hover: ícono y texto pasan a blanco pleno.
 - `pages/Mapa.jsx` — `PlanoParque.jsx`: plano de mensura real replicado como SVG interactivo (4 manzanas, 41 lotes + tira comercial de 24 locales, calles, arbolado, accesos, espacio verde, norte). Click en lote abre `LoteCard`.
 - `pages/Contacto.jsx` — formulario con envío **simulado** (`utils/enviarConsulta.js`).
 - La página **Empresas fue retirada temporalmente** (hasta que haya compradores); es recuperable del historial de git.
@@ -70,5 +71,6 @@ npm run build    # build de producción
 - Superficies de los 24 locales de la tira comercial.
 - Distancia en km a Santiago del Estero (el diagrama hoy muestra solo "Aeropuerto").
 - Imagen para acompañar la sección Motivación.
+- Carousel Perspectivas: las imágenes 2 y 4 son el mismo archivo (falta el render real de "Acceso de doble carril con vigilancia las 24 horas", hoy `perspectiva-4.jpg` repite el de calles internas).
 - El envío de email del formulario está **simulado**; `enviarConsulta()` se reemplazará por EmailJS/Resend.
 - Sección Empresas: se reincorpora cuando haya compradores.

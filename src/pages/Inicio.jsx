@@ -4,6 +4,7 @@ import PageTransition from '../components/PageTransition'
 import Reveal from '../components/Reveal'
 import TituloSeccion from '../components/TituloSeccion'
 import MapaDistancias from '../components/MapaDistancias'
+import Perspectivas from '../components/Perspectivas'
 import CaracteristicasParque from '../components/CaracteristicasParque'
 
 // TODO: reemplazar por el pin exacto del padrón 166293 cuando tengamos las coordenadas
@@ -206,6 +207,15 @@ function Inicio() {
                 <MapaDistancias />
               </Reveal>
             </div>
+          </div>
+        </section>
+
+        <section className="seccion">
+          <div className="seccion-contenido seccion-contenido-ancha">
+            <TituloSeccion overline="Pensado para tu operación">Perspectivas</TituloSeccion>
+            <Reveal>
+              <Perspectivas />
+            </Reveal>
           </div>
         </section>
 

@@ -99,7 +99,7 @@ function CaracteristicasParque() {
       variants={contenedorVariants}
     >
       {caracteristicas.map(({ titulo, icono }) => (
-        <motion.div className="caracteristica-card" key={titulo} variants={cardVariants}>
+        <motion.div className="caracteristica-item" key={titulo} variants={cardVariants}>
           <svg
             className="caracteristica-icono"
             viewBox="0 0 24 24"
