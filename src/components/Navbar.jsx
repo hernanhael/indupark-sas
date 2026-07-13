@@ -2,7 +2,8 @@ import { NavLink } from 'react-router-dom'
 
 const enlaces = [
   { to: '/', label: 'Inicio' },
-  { to: '/mapa', label: 'Mapa' },
+  { to: '/plano', label: 'Plano' },
+  { to: '/inversion-beneficios', label: 'Inversión' },
   { to: '/contacto', label: 'Contacto' },
 ]
 

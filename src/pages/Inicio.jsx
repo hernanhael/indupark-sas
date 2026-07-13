@@ -6,6 +6,7 @@ import TituloSeccion from '../components/TituloSeccion'
 import MapaDistancias from '../components/MapaDistancias'
 import Perspectivas from '../components/Perspectivas'
 import CaracteristicasParque from '../components/CaracteristicasParque'
+import VentajasParque from '../components/VentajasParque'
 
 // TODO: reemplazar por el pin exacto del padrón 166293 cuando tengamos las coordenadas
 const ENLACE_GOOGLE_MAPS =
@@ -225,6 +226,15 @@ function Inicio() {
               Características del parque
             </TituloSeccion>
             <CaracteristicasParque />
+          </div>
+        </section>
+
+        <section className="seccion">
+          <div className="seccion-contenido seccion-contenido-ancha">
+            <TituloSeccion overline="El lugar para tu empresa">
+              Ventajas de instalarse en Indupark
+            </TituloSeccion>
+            <VentajasParque />
           </div>
         </section>
       </main>

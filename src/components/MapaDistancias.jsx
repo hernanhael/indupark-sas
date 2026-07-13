@@ -102,6 +102,9 @@ function Pin({ relleno }) {
   )
 }
 
+// Valor especial de `activo`: hover/focus sobre el centro resalta todos los destinos
+const TODOS = 'todos'
+
 function MapaDistancias() {
   const [activo, setActivo] = useState(null)
 
@@ -125,23 +128,39 @@ function MapaDistancias() {
         />
       ))}
 
-      {/* Ruta resaltada al hacer hover */}
-      {destinos.map(({ id, curva }) => (
-        <motion.path
-          key={`ruta-${id}`}
-          d={curva}
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: activo === id ? 1 : 0, opacity: activo === id ? 1 : 0 }}
-          transition={{ duration: 0.45, ease: 'easeOut' }}
-        />
-      ))}
+      {/* Ruta resaltada al hacer hover (en cascada si el hover es sobre el centro) */}
+      {destinos.map(({ id, curva }, indice) => {
+        const resaltada = activo === id || activo === TODOS
+        return (
+          <motion.path
+            key={`ruta-${id}`}
+            d={curva}
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: resaltada ? 1 : 0, opacity: resaltada ? 1 : 0 }}
+            transition={{
+              duration: 0.45,
+              ease: 'easeOut',
+              delay: activo === TODOS ? indice * 0.08 : 0,
+            }}
+          />
+        )
+      })}
 
-      {/* Centro: Indupark */}
-      <g>
+      {/* Centro: Indupark — hover/focus resalta todas las rutas y distancias */}
+      <g
+        className="mapa-lugar"
+        tabIndex={0}
+        role="img"
+        aria-label="Indupark: mostrar las distancias a todos los destinos"
+        onPointerEnter={() => setActivo(TODOS)}
+        onPointerLeave={() => setActivo(null)}
+        onFocus={() => setActivo(TODOS)}
+        onBlur={() => setActivo(null)}
+      >
         <motion.circle
           cx={CENTRO.x}
           cy={CENTRO.y}
@@ -155,15 +174,21 @@ function MapaDistancias() {
         />
         <circle cx={CENTRO.x} cy={CENTRO.y} r="16" fill="#ffffff" />
         <circle cx={CENTRO.x} cy={CENTRO.y} r="6" fill="var(--color-fondo)" />
-        <text className="mapa-centro-nombre" x={CENTRO.x} y={CENTRO.y + 44} textAnchor="middle">
+        <text
+          className="mapa-centro-nombre"
+          x={CENTRO.x - 28}
+          y={CENTRO.y}
+          textAnchor="end"
+          dominantBaseline="middle"
+        >
           Indupark
         </text>
       </g>
 
       {/* Destinos */}
-      {destinos.map((destino) => {
+      {destinos.map((destino, indice) => {
         const { id, nombre, km, x, y, aeropuerto, relleno } = destino
-        const esActivo = activo === id
+        const esActivo = activo === id || activo === TODOS
         const textoBadge = km !== null ? `${km} km` : 'Aeropuerto'
         const anchoBadge = textoBadge.length * 9 + 26
 
@@ -183,7 +208,7 @@ function MapaDistancias() {
           >
             <motion.g
               transform={`translate(${x}, ${y})`}
-              animate={{ scale: esActivo ? 1.18 : 1 }}
+              animate={{ scale: activo === id ? 1.18 : 1 }}
               transition={{ duration: 0.25 }}
               style={{ transformBox: 'fill-box', transformOrigin: 'center bottom' }}
             >
@@ -199,7 +224,11 @@ function MapaDistancias() {
             <motion.g
               initial={false}
               animate={{ opacity: esActivo ? 1 : 0, y: esActivo ? 0 : 8 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
+              transition={{
+                duration: 0.25,
+                ease: 'easeOut',
+                delay: activo === TODOS ? 0.2 + indice * 0.08 : 0,
+              }}
               style={{ pointerEvents: 'none' }}
             >
               <rect

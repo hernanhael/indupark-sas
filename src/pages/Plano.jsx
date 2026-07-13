@@ -7,14 +7,14 @@ import lotes from '../data/lotes.json'
 
 const lotesPorId = Object.fromEntries(lotes.map((lote) => [lote.id, lote]))
 
-function Mapa() {
+function Plano() {
   const [idSeleccionado, setIdSeleccionado] = useState(null)
   const loteSeleccionado = idSeleccionado ? lotesPorId[idSeleccionado] : null
 
   return (
     <PageTransition>
       <main className="pagina">
-        <h1>Mapa del parque</h1>
+        <h1>Plano del parque</h1>
         <p className="mapa-descripcion">
           Hacé clic en un lote para ver su superficie y disponibilidad.
         </p>
@@ -49,4 +49,4 @@ function Mapa() {
   )
 }
 
-export default Mapa
+export default Plano

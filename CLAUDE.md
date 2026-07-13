@@ -2,7 +2,7 @@
 
 ## Estado actual (2026-07-13)
 
-Sitio en desarrollo activo con contenido real cargado: textos institucionales del dueño, imagen del portal en el hero, plano de mensura real replicado como SVG interactivo, diagrama de distancias nativo, carousel Perspectivas con renders del parque y sección Características rediseñada (ícono + título, sin cajas). Ver `ROADMAP.md` para fases y pendientes.
+Sitio en desarrollo activo con contenido real cargado: textos institucionales del dueño, imagen del portal en el hero, plano de mensura real replicado como SVG interactivo, diagrama de distancias nativo, carousel Perspectivas con renders del parque, sección Características rediseñada (ícono + título, sin cajas), sección Ventajas con íconos animados, página Plano (ex Mapa), scaffold de Inversión y Beneficios, y Footer global. Ver `ROADMAP.md` para fases y pendientes.
 
 ## Qué es
 
@@ -11,7 +11,7 @@ Sitio web de un parque logístico y comercial en Río Chico, Tucumán (18 ha, 4 
 ## Stack (ya decidido — no cambiar sin consultar)
 
 - Vite + React, **JavaScript sin TypeScript**
-- `react-router-dom` — páginas/rutas activas: `/` (Inicio), `/mapa`, `/contacto`
+- `react-router-dom` — páginas/rutas activas: `/` (Inicio), `/plano`, `/inversion-beneficios`, `/contacto`
 - `framer-motion` — transiciones de página, crossfades del hero y animaciones de aparición
 - CSS plano con variables en `:root` — **sin Tailwind ni librerías de UI**
 - Tipografías: **Archivo** (títulos, vía Google Fonts en `index.html`) + Inter/system (cuerpo)
@@ -25,16 +25,18 @@ npm run build    # build de producción
 
 ## Estructura de páginas y componentes
 
-- `pages/Inicio.jsx` — hero + Motivación + Ubicación + Perspectivas + Características.
+- `pages/Inicio.jsx` — hero + Motivación + Ubicación + Perspectivas + Características + Ventajas.
   - **Hero**: pantalla completa con foto del portal (`public/media/hero-portal.jpg`) + overlay oscuro y zoom lento. El scroll dentro del hero avanza por **pasos discretos** (banner → 4 párrafos institucionales) con crossfade; captura wheel/touch hasta agotar los pasos. Franja `hero-fundido` degrada la foto hacia el fondo de página.
   - **Motivación**: texto justificado (máx. 760px), con espacio previsto para una imagen a su izquierda (pendiente).
-  - **Ubicación**: imagen satelital del padrón 166293 enmarcada (borde blanco fino) que linkea a Google Maps (**TODO: reemplazar por el pin exacto**, hoy es una búsqueda aproximada) + `MapaDistancias.jsx`, diagrama SVG nativo con hover que dibuja la ruta y muestra los km.
+  - **Ubicación**: imagen satelital del padrón 166293 enmarcada (borde blanco fino) que linkea a Google Maps (**TODO: reemplazar por el pin exacto**, hoy es una búsqueda aproximada) + `MapaDistancias.jsx`, diagrama SVG nativo con hover que dibuja la ruta y muestra los km; hover/focus sobre el punto central de Indupark dibuja todas las rutas en cascada y muestra todos los kilometrajes (valor `activo = 'todos'`). La etiqueta "Indupark" va a la izquierda del círculo central (anclada por la derecha, `dominantBaseline="middle"`).
   - **Perspectivas**: `Perspectivas.jsx`, carousel de 9 renders (`public/media/perspectivas/`) con frase superpuesta abajo a la izquierda sobre degradé. Autoplay de 6 s (se pausa con hover/focus/fuera de viewport), crossfade direccional con framer-motion, swipe, flechas de teclado, flechas de texto superpuestas a los laterales de la imagen, e indicadores de línea + contador debajo. La frase va en una sola línea en desktop (≥861px) y envuelve en pantallas chicas.
   - **Características**: `CaracteristicasParque.jsx`, 9 ítems en grilla de 3 columnas, sin caja ni líneas: ícono SVG lineal a la izquierda + título al lado. Hover: ícono y texto pasan a blanco pleno.
-- `pages/Mapa.jsx` — `PlanoParque.jsx`: plano de mensura real replicado como SVG interactivo (4 manzanas, 41 lotes + tira comercial de 24 locales, calles, arbolado, accesos, espacio verde, norte). Click en lote abre `LoteCard`.
+  - **Ventajas**: `VentajasParque.jsx`, "Ventajas de instalarse en Indupark" — 5 ítems (ícono animado 54px + título + párrafo) en grilla de 3 columnas. Los íconos SVG se dibujan trazo a trazo al entrar en viewport (framer-motion `pathLength`) y llevan loops CSS permanentes (clases `ventaja-*`: pulso de radar, guiones en marcha, nodos que titilan, flecha que flota), desactivados con `prefers-reduced-motion`. Ojo: no mezclar `pathLength` con animaciones CSS de `stroke-dasharray` en el mismo elemento — pisan la misma propiedad.
+- `pages/Plano.jsx` — `PlanoParque.jsx`: plano de mensura real replicado como SVG interactivo (4 manzanas, 41 lotes + tira comercial de 24 locales, calles, arbolado, accesos, espacio verde, norte). Click en lote abre `LoteCard`.
+- `pages/Inversion.jsx` (ruta `/inversion-beneficios`, link de navbar "Inversión") — **scaffold vacío**: solo `<h1>Inversión y Beneficios</h1>`, sin secciones ni contenido. Falta el contenido real (planes de pago, condiciones de financiamiento, beneficios, moneda, plazos).
 - `pages/Contacto.jsx` — formulario con envío **simulado** (`utils/enviarConsulta.js`).
 - La página **Empresas fue retirada temporalmente** (hasta que haya compradores); es recuperable del historial de git.
-- Componentes compartidos: `Navbar` (fija), `BotonArriba`, `ScrollToTop`, `PageTransition`, `Reveal`, `TituloSeccion` (overline + título con reveal + línea).
+- Componentes compartidos: `Navbar` (fija), `Footer` (global en `App.jsx`: fondo más oscuro que la página `#06122e` para diferenciarse, contenido centrado — marca + tagline y línea legal con año dinámico; sin navegación y sin datos de contacto hasta que el dueño los provea), `BotonArriba`, `ScrollToTop`, `PageTransition`, `Reveal`, `TituloSeccion` (overline + título con reveal + línea).
 
 ## Reglas de diseño (pedidas explícitamente por el dueño del proyecto)
 
@@ -74,3 +76,5 @@ npm run build    # build de producción
 - Carousel Perspectivas: las imágenes 2 y 4 son el mismo archivo (falta el render real de "Acceso de doble carril con vigilancia las 24 horas", hoy `perspectiva-4.jpg` repite el de calles internas).
 - El envío de email del formulario está **simulado**; `enviarConsulta()` se reemplazará por EmailJS/Resend.
 - Sección Empresas: se reincorpora cuando haya compradores.
+- Página Inversión y Beneficios (`/inversion-beneficios`): falta todo el contenido (planes de pago, financiamiento propio o bancario, beneficios, moneda, plazos). Hoy es solo un scaffold con el `<h1>`.
+- Navbar sin responsive (Fase 6 pendiente): `.navbar-links` no tiene `flex-wrap` ni media query; en viewports angostos puede cortar u overflowear. Se agravó levemente al sumar el link "Inversión" — evaluar al abordar Fase 6.
