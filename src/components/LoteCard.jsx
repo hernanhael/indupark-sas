@@ -20,8 +20,8 @@ function LoteCard({ lote, onCerrar }) {
         <button className="lote-card-cerrar" onClick={onCerrar} aria-label="Cerrar">
           ✕
         </button>
-        <h2>Lote {lote.numero}</h2>
-        <p>{lote.medidas}</p>
+        <h2>{lote.nombre}</h2>
+        {lote.superficie && <p>{lote.superficie}</p>}
         <p className={`lote-estado lote-estado-${lote.estado}`}>
           {lote.estado === 'vendido' ? 'Vendido' : 'Disponible'}
         </p>

@@ -5,7 +5,6 @@ import BotonArriba from './components/BotonArriba'
 import ScrollToTop from './components/ScrollToTop'
 import Inicio from './pages/Inicio'
 import Mapa from './pages/Mapa'
-import Empresas from './pages/Empresas'
 import Contacto from './pages/Contacto'
 
 function App() {
@@ -19,7 +18,6 @@ function App() {
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Inicio />} />
           <Route path="/mapa" element={<Mapa />} />
-          <Route path="/empresas" element={<Empresas />} />
           <Route path="/contacto" element={<Contacto />} />
         </Routes>
       </AnimatePresence>

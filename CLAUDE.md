@@ -1,19 +1,20 @@
-# Indupark SAS — Sitio web del parque industrial
+# Indupark SAS — Sitio web del parque logístico y comercial
 
-## Estado actual
+## Estado actual (2026-07-13)
 
-**Fases 1 a 5 del `PLAN.md` completas** (scaffold, layout global, Inicio, Mapa interactivo, Empresas y Contacto). Queda pendiente la Fase 6 (responsive). Ver `ROADMAP.md` para el detalle de fases y lo que depende del dueño del proyecto.
+Sitio en desarrollo activo con contenido real cargado: textos institucionales del dueño, imagen del portal en el hero, plano de mensura real replicado como SVG interactivo, y diagrama de distancias nativo. Ver `ROADMAP.md` para fases y pendientes.
 
 ## Qué es
 
-Sitio web de un parque industrial: presentación institucional, mapa interactivo de lotes (disponibles/vendidos), empresas instaladas, formulario de contacto y, a futuro, un recorrido 3D. Todo el contenido es en **español**.
+Sitio web de un parque logístico y comercial en Río Chico, Tucumán (18 ha, 4 manzanas): presentación institucional, mapa interactivo de lotes (disponibles/vendidos), formulario de contacto y, a futuro, un recorrido 3D. Todo el contenido es en **español**.
 
 ## Stack (ya decidido — no cambiar sin consultar)
 
 - Vite + React, **JavaScript sin TypeScript**
-- `react-router-dom` — cada sección es una página/ruta: `/`, `/mapa`, `/empresas`, `/contacto`
-- `framer-motion` — transiciones de página y animaciones de aparición al scrollear
+- `react-router-dom` — páginas/rutas activas: `/` (Inicio), `/mapa`, `/contacto`
+- `framer-motion` — transiciones de página, crossfades del hero y animaciones de aparición
 - CSS plano con variables en `:root` — **sin Tailwind ni librerías de UI**
+- Tipografías: **Archivo** (títulos, vía Google Fonts en `index.html`) + Inter/system (cuerpo)
 
 ## Comandos
 
@@ -22,36 +23,52 @@ npm run dev      # servidor de desarrollo
 npm run build    # build de producción
 ```
 
+## Estructura de páginas y componentes
+
+- `pages/Inicio.jsx` — hero + Motivación + Ubicación + Características.
+  - **Hero**: pantalla completa con foto del portal (`public/media/hero-portal.jpg`) + overlay oscuro y zoom lento. El scroll dentro del hero avanza por **pasos discretos** (banner → 4 párrafos institucionales) con crossfade; captura wheel/touch hasta agotar los pasos. Franja `hero-fundido` degrada la foto hacia el fondo de página.
+  - **Motivación**: texto justificado (máx. 760px), con espacio previsto para una imagen a su izquierda (pendiente).
+  - **Ubicación**: imagen satelital del padrón 166293 enmarcada (borde blanco fino) que linkea a Google Maps (**TODO: reemplazar por el pin exacto**, hoy es una búsqueda aproximada) + `MapaDistancias.jsx`, diagrama SVG nativo con hover que dibuja la ruta y muestra los km.
+  - **Características**: `CaracteristicasParque.jsx`, 9 cards con íconos SVG lineales.
+- `pages/Mapa.jsx` — `PlanoParque.jsx`: plano de mensura real replicado como SVG interactivo (4 manzanas, 41 lotes + tira comercial de 24 locales, calles, arbolado, accesos, espacio verde, norte). Click en lote abre `LoteCard`.
+- `pages/Contacto.jsx` — formulario con envío **simulado** (`utils/enviarConsulta.js`).
+- La página **Empresas fue retirada temporalmente** (hasta que haya compradores); es recuperable del historial de git.
+- Componentes compartidos: `Navbar` (fija), `BotonArriba`, `ScrollToTop`, `PageTransition`, `Reveal`, `TituloSeccion` (overline + título con reveal + línea).
+
 ## Reglas de diseño (pedidas explícitamente por el dueño del proyecto)
 
-- Fondo azul francia oscuro (`#0f2557` aprox.), texto blanco, estilo **sumamente minimalista**.
+- Fondo azul oscuro `#0a1c42` (`--color-fondo`), bloques/cards `#0f2557` (`--color-fondo-alterno`), texto blanco, estilo **sumamente minimalista**.
+- Títulos de sección vía `TituloSeccion`: overline en mayúsculas espaciadas + título Archivo 800 uppercase, más chicos que el H1 del hero.
 - Botones y links: **solo texto**, sin forma de botón — hover con `border-bottom` que aparece/crece. Sin cajas, sin fondos, sin sombras.
-- Navbar **sin delimitación**: mismo fondo que el contenido, sin borde ni sombra; el paso del nav al contenido debe ser natural y continuo.
-- Animaciones de aparición al scrollear se disparan **una sola vez** (`viewport={{ once: true }}`), no cada vez que el elemento reentra.
-- Botón "ir arriba" flotante: mediano (~44px), mínimamente visible (opacidad baja, sube al hover), aparece solo tras scrollear.
-- Mapa de lotes: verde = disponible, rojo = vendido; hover agranda levemente el lote; click abre card con número, medidas y comprador.
+- Navbar **fija** y sin delimitación: transparente, sin borde ni sombra.
+- Animaciones de aparición al scrollear se disparan **una sola vez** (`viewport={{ once: true }}`).
+- Todas las secciones comparten el contenedor `seccion-contenido-ancha` (1120px) para mantener el mismo margen izquierdo.
+- Plano de lotes: verde = disponible, rojizo = vendido; hover aclara; click abre card.
 
 ## Datos de lotes
 
-`src/data/lotes.json` es la **única fuente de verdad** de los lotes. Un registro por lote:
+`src/data/lotes.json` es la **única fuente de verdad**. Un registro por lote:
 
 ```json
-{ "id": "lote-12", "numero": 12, "medidas": "50m x 80m (4.000 m²)",
-  "estado": "vendido", "comprador": "Empresa X" }
+{ "id": "lote-12", "numero": 12, "nombre": "Lote 12",
+  "superficie": "2.442,88 m²", "estado": "disponible" }
 ```
 
-- `id` sigue la convención `lote-<numero>` y debe coincidir con el `id` del elemento SVG del plano.
-- `estado`: `"disponible"` o `"vendido"`. Si es vendido, `comprador` lleva el nombre de la empresa.
-- Para marcar una venta se edita este JSON a mano; el mapa se repinta solo.
+- Ids: `lote-<n>` (1–41, superficies reales del plano de mensura) y `local-<n>` (1–24, tira comercial, superficie pendiente).
+- `estado`: `"disponible"` o `"vendido"`. Si es vendido, agregar `"comprador": "Empresa X"`.
+- Para marcar una venta se edita este JSON a mano; el plano se repinta solo.
+- La geometría del plano vive en `PlanoParque.jsx` y se vincula por `id`.
 
 ## Documentos de referencia
 
-- `PLAN.md` — plan de implementación completo (arquitectura, páginas, orden de trabajo, verificación).
-- `ROADMAP.md` — fases con estado y pendientes que dependen del dueño (plano real, logos, email real, 3D).
+- `PLAN.md` — plan original de implementación (histórico, no refleja el estado actual).
+- `ROADMAP.md` — fases con estado y pendientes que dependen del dueño.
 
 ## Pendientes que dependen del dueño (no inventar)
 
-- Plano real del loteo (hoy se usa un SVG provisorio).
-- Videos/imágenes del hero (van en `public/media/`).
-- Textos institucionales, medidas reales de lotes y datos de los vendedores.
-- El envío de email del formulario está **simulado**; la función `enviarConsulta()` se reemplazará por EmailJS/Resend más adelante.
+- Coordenadas/link exacto de Google Maps del padrón 166293 (hoy búsqueda aproximada).
+- Superficies de los 24 locales de la tira comercial.
+- Distancia en km a Santiago del Estero (el diagrama hoy muestra solo "Aeropuerto").
+- Imagen para acompañar la sección Motivación.
+- El envío de email del formulario está **simulado**; `enviarConsulta()` se reemplazará por EmailJS/Resend.
+- Sección Empresas: se reincorpora cuando haya compradores.

@@ -1,5 +1,10 @@
 # Plan de implementación — Sitio web Indupark SAS
 
+> **Nota (2026-07-13):** este es el plan original y se conserva como referencia histórica.
+> El estado actual del proyecto está en `CLAUDE.md` y `ROADMAP.md` (varias cosas cambiaron:
+> Empresas retirada temporalmente, hero con foto y avance por pasos, plano real ya integrado,
+> paleta invertida, tipografía Archivo para títulos).
+
 ## Contexto
 
 Crear desde cero el sitio web de un parque industrial (Indupark SAS). El sitio se organiza en **páginas separadas con rutas** (Inicio, Mapa, Empresas, Contacto, y futura sección 3D), con navegación por navbar. Diseño minimalista: fondo azul francia oscuro, tipografía blanca amigable, botones de solo texto con subrayado al hover, y animaciones que aparecen al scrollear dentro de cada página.
