@@ -138,6 +138,45 @@ button {
   margin-top: 1rem;
 }
 
+.transicion-contenedor {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.transicion-contenedor::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(15, 37, 87, 0.35);
+  pointer-events: none;
+}
+
+.transicion-video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.transicion-texto {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.transicion-texto p {
+  color: var(--color-texto-secundario);
+}
+
 .seccion {
   padding: 5rem 2rem;
 }

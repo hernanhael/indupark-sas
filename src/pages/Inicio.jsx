@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import PageTransition from '../components/PageTransition'
 import Reveal from '../components/Reveal'
+import TransicionVideo from '../components/TransicionVideo'
 
 const contenedorVariants = {
   oculto: {},
@@ -50,12 +51,10 @@ function Inicio() {
           </motion.div>
         </section>
 
-        <Reveal className="seccion">
-          <div className="seccion-contenido">
-            <h2>Quiénes somos</h2>
-            <p>Descripción institucional pendiente de definición por el dueño del proyecto.</p>
-          </div>
-        </Reveal>
+        <TransicionVideo video="/media/video-camion.mp4">
+          <h2>Quiénes somos</h2>
+          <p>Descripción institucional pendiente de definición por el dueño del proyecto.</p>
+        </TransicionVideo>
 
         <Reveal className="seccion seccion-alterno">
           <div className="seccion-contenido">
