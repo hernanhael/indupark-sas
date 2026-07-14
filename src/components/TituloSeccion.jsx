@@ -20,7 +20,7 @@ const lineaVariants = {
   visible: { scaleX: 1, transition: { duration: 0.6, ease: 'easeOut' } },
 }
 
-function TituloSeccion({ overline, children }) {
+function TituloSeccion({ overline, children, as: Encabezado = 'h2' }) {
   return (
     <motion.div
       className="titulo-seccion"
@@ -34,13 +34,13 @@ function TituloSeccion({ overline, children }) {
           {overline}
         </motion.span>
       )}
-      <h2 className="titulo-grande">
+      <Encabezado className="titulo-grande">
         <span className="titulo-mascara">
           <motion.span className="titulo-texto" variants={textoVariants}>
             {children}
           </motion.span>
         </span>
-      </h2>
+      </Encabezado>
       <motion.span className="titulo-linea" variants={lineaVariants} />
     </motion.div>
   )

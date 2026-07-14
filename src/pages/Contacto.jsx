@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useSearchParams } from 'react-router-dom'
 import PageTransition from '../components/PageTransition'
 import { enviarConsulta } from '../utils/enviarConsulta'
 import lotes from '../data/lotes.json'
@@ -9,7 +10,11 @@ const lotesDisponibles = lotes.filter((lote) => lote.estado === 'disponible')
 const ESTADO_INICIAL = { nombre: '', email: '', telefono: '', mensaje: '', lote: '' }
 
 function Contacto() {
-  const [datos, setDatos] = useState(ESTADO_INICIAL)
+  const [searchParams] = useSearchParams()
+  const [datos, setDatos] = useState(() => ({
+    ...ESTADO_INICIAL,
+    lote: searchParams.get('lote') ?? '',
+  }))
   const [envio, setEnvio] = useState('inicial') // inicial | enviando | enviado
 
   const manejarCambio = (evento) => {
@@ -70,8 +75,9 @@ function Contacto() {
                 <select name="lote" value={datos.lote} onChange={manejarCambio}>
                   <option value="">Sin especificar</option>
                   {lotesDisponibles.map((lote) => (
-                    <option key={lote.id} value={lote.numero}>
-                      Lote {lote.numero} — {lote.medidas}
+                    <option key={lote.id} value={lote.nombre}>
+                      {lote.nombre}
+                      {lote.superficie ? ` — ${lote.superficie}` : ''}
                     </option>
                   ))}
                 </select>

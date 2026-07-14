@@ -2,7 +2,7 @@
 
 ## Estado actual (2026-07-13)
 
-Sitio en desarrollo activo con contenido real cargado: textos institucionales del dueño, imagen del portal en el hero, plano de mensura real replicado como SVG interactivo, diagrama de distancias nativo, carousel Perspectivas con renders del parque, sección Características rediseñada (ícono + título, sin cajas), sección Ventajas con íconos animados, página Plano (ex Mapa), scaffold de Inversión y Beneficios, y Footer global. Ver `ROADMAP.md` para fases y pendientes.
+Sitio en desarrollo activo con contenido real cargado: textos institucionales del dueño, imagen del portal en el hero, plano de mensura real replicado como SVG interactivo, diagrama de distancias nativo, carousel Perspectivas con renders del parque, sección Características rediseñada (ícono + título, sin cajas), sección Ventajas con íconos animados, página Plano rediseñada (mapa apaisado a ancho completo, etiquetas abreviadas y burbuja de datos al hover/click), scaffold de Inversión y Beneficios, y Footer global. Ver `ROADMAP.md` para fases y pendientes.
 
 ## Qué es
 
@@ -32,11 +32,11 @@ npm run build    # build de producción
   - **Perspectivas**: `Perspectivas.jsx`, carousel de 9 renders (`public/media/perspectivas/`) con frase superpuesta abajo a la izquierda sobre degradé. Autoplay de 6 s (se pausa con hover/focus/fuera de viewport), crossfade direccional con framer-motion, swipe, flechas de teclado, flechas de texto superpuestas a los laterales de la imagen, e indicadores de línea + contador debajo. La frase va en una sola línea en desktop (≥861px) y envuelve en pantallas chicas.
   - **Características**: `CaracteristicasParque.jsx`, 9 ítems en grilla de 3 columnas, sin caja ni líneas: ícono SVG lineal a la izquierda + título al lado. Hover: ícono y texto pasan a blanco pleno.
   - **Ventajas**: `VentajasParque.jsx`, "Ventajas de instalarse en Indupark" — 5 ítems (ícono animado 54px + título + párrafo) en grilla de 3 columnas. Los íconos SVG se dibujan trazo a trazo al entrar en viewport (framer-motion `pathLength`) y llevan loops CSS permanentes (clases `ventaja-*`: pulso de radar, guiones en marcha, nodos que titilan, flecha que flota), desactivados con `prefers-reduced-motion`. Ojo: no mezclar `pathLength` con animaciones CSS de `stroke-dasharray` en el mismo elemento — pisan la misma propiedad.
-- `pages/Plano.jsx` — `PlanoParque.jsx`: plano de mensura real replicado como SVG interactivo (4 manzanas, 41 lotes + tira comercial de 24 locales, calles, arbolado, accesos, espacio verde, norte). Click en lote abre `LoteCard`.
+- `pages/Plano.jsx` — título con `TituloSeccion` (`as="h1"`) + `PlanoParque.jsx` (sin texto descriptivo ni leyenda): plano de mensura real replicado como SVG interactivo (4 manzanas, 41 lotes + tira comercial de 24 locales, calles, accesos, norte y la ruta al pie como dos líneas). El plano va apaisado (viewBox 1190×748): lotes 33–41 a la izquierda y 1–8 a la derecha, con el norte indicado por una rosa de los vientos (estrella de 4 puntas, brazo largo = N) apuntando a la derecha para que siga siendo correcto. Sin arbolado ni espacio verde. Las etiquetas del mapa son abreviadas y sin superficie (L1…L41 y A1…A24 para los locales); la superficie se ve por hover/click en el panel. El mapa ocupa todo el ancho del contenedor y los datos del lote salen en una **burbuja** (`.plano-burbuja`, renderizada dentro de `PlanoParque`, que maneja su propio estado): sigue el cursor con hover, y click/tap/Enter la fija en el lugar (segundo click la suelta; click fuera de un lote también); fijada y disponible muestra el link "Consultar" a `/contacto?lote=<nombre>` (Contacto preselecciona el lote leyendo ese query param; el select usa `nombre` como value porque `numero` se repite entre lotes y locales). No hay panel lateral ni card modal (`PanelLote` y `LoteCard` fueron eliminados).
 - `pages/Inversion.jsx` (ruta `/inversion-beneficios`, link de navbar "Inversión") — **scaffold vacío**: solo `<h1>Inversión y Beneficios</h1>`, sin secciones ni contenido. Falta el contenido real (planes de pago, condiciones de financiamiento, beneficios, moneda, plazos).
 - `pages/Contacto.jsx` — formulario con envío **simulado** (`utils/enviarConsulta.js`).
 - La página **Empresas fue retirada temporalmente** (hasta que haya compradores); es recuperable del historial de git.
-- Componentes compartidos: `Navbar` (fija), `Footer` (global en `App.jsx`: fondo más oscuro que la página `#06122e` para diferenciarse, contenido centrado — marca + tagline y línea legal con año dinámico; sin navegación y sin datos de contacto hasta que el dueño los provea), `BotonArriba`, `ScrollToTop`, `PageTransition`, `Reveal`, `TituloSeccion` (overline + título con reveal + línea).
+- Componentes compartidos: `Navbar` (fija), `Footer` (global en `App.jsx`: fondo más oscuro que la página `#06122e` para diferenciarse, contenido centrado — marca + tagline y línea legal con año dinámico; sin navegación y sin datos de contacto hasta que el dueño los provea), `BotonArriba`, `ScrollToTop`, `PageTransition`, `Reveal`, `TituloSeccion` (overline + título con reveal + línea; prop opcional `as` para el tag del encabezado, por defecto `h2` — Plano usa `as="h1"`).
 
 ## Reglas de diseño (pedidas explícitamente por el dueño del proyecto)
 
@@ -46,7 +46,7 @@ npm run build    # build de producción
 - Navbar **fija** y sin delimitación: transparente, sin borde ni sombra.
 - Animaciones de aparición al scrollear se disparan **una sola vez** (`viewport={{ once: true }}`).
 - Todas las secciones comparten el contenedor `seccion-contenido-ancha` (1120px) para mantener el mismo margen izquierdo.
-- Plano de lotes: verde = disponible, rojizo = vendido; hover aclara; click abre card.
+- Plano de lotes: verde = disponible, rojizo = vendido; hover aclara y previsualiza en el panel lateral; click fija la selección.
 
 ## Datos de lotes
 
@@ -57,7 +57,7 @@ npm run build    # build de producción
   "superficie": "2.442,88 m²", "estado": "disponible" }
 ```
 
-- Ids: `lote-<n>` (1–41, superficies reales del plano de mensura) y `local-<n>` (1–24, tira comercial, superficie pendiente).
+- Ids: `lote-<n>` (1–41, superficies reales del plano de mensura) y `local-<n>` (1–24, tira comercial, superficie pendiente, `nombre` = "Local A<n>").
 - `estado`: `"disponible"` o `"vendido"`. Si es vendido, agregar `"comprador": "Empresa X"`.
 - Para marcar una venta se edita este JSON a mano; el plano se repinta solo.
 - La geometría del plano vive en `PlanoParque.jsx` y se vincula por `id`.

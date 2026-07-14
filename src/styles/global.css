@@ -771,14 +771,61 @@ button {
   text-justify: inter-word;
 }
 
-.mapa-contenedor {
-  max-width: 1200px;
-  margin: 2rem auto 0;
+/* Plano: mapa a ancho completo + burbuja con los datos del lote */
+.plano-envoltorio {
+  position: relative;
+  margin-top: 2.5rem;
 }
 
-.mapa-descripcion {
+.plano-burbuja {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 16px));
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.6rem 0.9rem;
+  background-color: var(--color-fondo-alterno);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.plano-burbuja-fijada {
+  pointer-events: auto;
+}
+
+.plano-burbuja-nombre {
+  font-family: var(--fuente-titulos);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.85rem;
+}
+
+.plano-burbuja-superficie {
+  font-size: 0.85rem;
   color: var(--color-texto-secundario);
-  margin-top: 0.5rem;
+}
+
+.plano-burbuja-estado {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.plano-burbuja-disponible {
+  color: var(--color-disponible);
+}
+
+.plano-burbuja-vendido {
+  color: var(--color-vendido);
+}
+
+.plano-burbuja-cta {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  align-self: flex-start;
 }
 
 .plano-parque {
@@ -840,15 +887,9 @@ button {
   fill: #571f16;
 }
 
-.plano-espacio-verde {
-  fill: #21b03c;
-  stroke: rgba(255, 255, 255, 0.6);
-  stroke-width: 1;
-}
-
-.plano-arboles circle {
-  fill: #2a5f33;
-  pointer-events: none;
+.plano-ruta line {
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 1.5;
 }
 
 .plano-acceso-caja {
@@ -865,17 +906,15 @@ button {
   font-family: var(--fuente-titulos);
 }
 
-.plano-norte-circulo {
+.plano-norte-estrella {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.7);
-  stroke-width: 1.5;
+  stroke: rgba(255, 255, 255, 0.85);
+  stroke-width: 1.2;
+  stroke-linejoin: miter;
 }
 
-.plano-norte-flecha {
-  stroke: #ffffff;
-  stroke-width: 2;
-  stroke-linecap: round;
-  fill: none;
+.plano-norte-relleno {
+  fill: #ffffff;
 }
 
 .plano-norte-texto {
@@ -883,92 +922,6 @@ button {
   font-size: 13px;
   font-weight: 700;
   font-family: var(--fuente-titulos);
-}
-
-.plano-leyenda {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  margin-top: 1.25rem;
-}
-
-.plano-leyenda-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--color-texto-secundario);
-}
-
-.plano-leyenda-color {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-.leyenda-disponible {
-  background-color: #a7d08c;
-}
-
-.leyenda-vendido {
-  background-color: #cf8f85;
-}
-
-.leyenda-verde {
-  background-color: #21b03c;
-}
-
-.lote-card-fondo {
-  position: fixed;
-  inset: 0;
-  background: rgba(6, 14, 36, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-  padding: 1.5rem;
-}
-
-.lote-card {
-  position: relative;
-  background: var(--color-fondo-alterno);
-  border-radius: 8px;
-  padding: 2rem 2.5rem;
-  max-width: 360px;
-  width: 100%;
-}
-
-.lote-card-cerrar {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: none;
-  border: none;
-  color: var(--color-texto);
-  font-size: 1rem;
-  cursor: pointer;
-  opacity: 0.6;
-}
-
-.lote-card-cerrar:hover {
-  opacity: 1;
-}
-
-.lote-estado {
-  font-weight: 600;
-}
-
-.lote-estado-disponible {
-  color: var(--color-disponible);
-}
-
-.lote-estado-vendido {
-  color: var(--color-vendido);
-}
-
-.lote-comprador {
-  color: var(--color-texto-secundario);
 }
 
 

@@ -1,21 +1,16 @@
-// Plano interactivo del parque, calcado del plano de mensura:
+// Plano interactivo del parque, calcado del plano de mensura, en formato
+// apaisado (1190 × 748): la manzana de los lotes 33-41 queda a la izquierda
+// y la de los lotes 1-8 a la derecha, por lo que el norte apunta a la derecha.
 // 4 manzanas (41 lotes) + tira comercial de 24 locales, calles internas,
-// arbolado perimetral, accesos y espacio verde.
+// accesos y la ruta al pie. Etiquetas abreviadas (L1…L41 / A1…A24); los datos
+// del lote salen en una burbuja que sigue el cursor (hover) o se fija (click).
+
+import { useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 
 const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]
 const aPuntos = (puntos) => puntos.map((p) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ')
-
-const SUPERFICIES = {
-  1: '9.136,89', 2: '4.083,71', 3: '4.257,83', 4: '4.257,83', 5: '4.257,83',
-  6: '4.257,83', 7: '4.257,83', 8: '4.255,24', 9: '2.336,41', 10: '2.542,11',
-  11: '2.492,49', 12: '2.442,88', 13: '2.393,27', 14: '2.306,76', 15: '2.277,68',
-  16: '2.311,45', 17: '2.311,45', 18: '2.311,45', 19: '2.311,45', 20: '2.290,22',
-  21: '2.277,68', 22: '2.412,54', 23: '2.419,27', 24: '2.412,54', 25: '2.412,54',
-  26: '2.375,92', 27: '2.136,30', 28: '2.432,71', 29: '2.439,44', 30: '2.436,57',
-  31: '2.443,29', 32: '2.418,34', 33: '3.393,98', 34: '3.882,25', 35: '3.882,84',
-  36: '3.883,43', 37: '3.884,02', 38: '3.884,61', 39: '3.885,19', 40: '3.885,78',
-  41: '3.878,65',
-}
 
 const centroide = (puntos) => {
   const sx = puntos.reduce((s, p) => s + p[0], 0)
@@ -116,30 +111,40 @@ const lotes = []
   }
 }
 
-// --- Arbolado: perímetro + anillos alrededor de las manzanas B y C ---
-function puntosSobrePoligono(vertices, paso) {
-  const puntos = []
-  for (let s = 0; s < vertices.length; s++) {
-    const p0 = vertices[s]
-    const p1 = vertices[(s + 1) % vertices.length]
-    const largo = Math.hypot(p1[0] - p0[0], p1[1] - p0[1])
-    const n = Math.max(1, Math.round(largo / paso))
-    for (let i = s === 0 ? 0 : 1; i <= n; i++) {
-      puntos.push(lerp(p0, p1, i / n))
-    }
-  }
-  return puntos
-}
-
 const PERIMETRO = [[88, 106], [1080, 30], [1102, 620], [300, 692], [76, 642]]
 
-const arboles = [
-  ...puntosSobrePoligono([[96, 116], [1070, 44], [1090, 612], [305, 680], [88, 634]], 42),
-  ...puntosSobrePoligono([[320, 100], [606, 100], [606, 540], [320, 540]], 40),
-  ...puntosSobrePoligono([[612, 84], [898, 84], [898, 534], [612, 534]], 40),
-]
+const VIEWBOX = { ancho: 1190, alto: 748 }
 
-function PlanoParque({ lotesPorId, idSeleccionado, onSeleccionar }) {
+const centroDeLote = (lote) =>
+  lote.rect
+    ? [lote.rect.x + lote.rect.w / 2, lote.rect.y + lote.rect.h / 2]
+    : centroide(lote.puntos)
+
+function PlanoParque({ lotesPorId }) {
+  const envoltorioRef = useRef(null)
+  const [foco, setFoco] = useState(null) // { id, x, y } — burbuja que sigue el cursor
+  const [fijada, setFijada] = useState(null) // { id, x, y } — burbuja fijada con click/tap
+
+  // Mantiene la burbuja dentro del ancho del mapa y con lugar arriba del cursor
+  const clamparPos = (x, y, rect) => ({
+    x: Math.min(Math.max(x, 90), rect.width - 90),
+    y: Math.max(y, 90),
+  })
+
+  const posDesdeEvento = (evento) => {
+    const rect = envoltorioRef.current.getBoundingClientRect()
+    return clamparPos(evento.clientX - rect.left, evento.clientY - rect.top, rect)
+  }
+
+  const posDesdeLote = (lote) => {
+    const rect = envoltorioRef.current.getBoundingClientRect()
+    const [cx, cy] = centroDeLote(lote)
+    return clamparPos((cx * rect.width) / VIEWBOX.ancho, (cy * rect.height) / VIEWBOX.alto, rect)
+  }
+
+  const alternarFijada = (lote, pos) =>
+    setFijada((anterior) => (anterior?.id === lote.id ? null : { id: lote.id, ...pos }))
+
   const renderEtiqueta = (lote) => {
     const [cx, cy] = lote.rect
       ? [lote.rect.x + lote.rect.w / 2, lote.rect.y + lote.rect.h / 2]
@@ -150,19 +155,16 @@ function PlanoParque({ lotesPorId, idSeleccionado, onSeleccionar }) {
     if (lote.tamano === 'mini') {
       const [tx, ty] = lote.puntos[0]
       return (
-        <text key={`et-${lote.id}`} className={claseTexto} x={(tx + lote.puntos[1][0]) / 2} y={ty + 16} textAnchor="middle" fontSize="8.5" style={{ pointerEvents: 'none' }}>
-          {lote.numero}
+        <text key={`et-${lote.id}`} className={claseTexto} x={(tx + lote.puntos[1][0]) / 2} y={ty + 16} textAnchor="middle" fontSize="9" fontWeight="700" style={{ pointerEvents: 'none' }}>
+          {`A${lote.numero}`}
         </text>
       )
     }
 
     const esGrande = lote.tamano === 'grande'
     return (
-      <text key={`et-${lote.id}`} className={claseTexto} x={cx} y={cy - 2} textAnchor="middle" style={{ pointerEvents: 'none' }}>
-        <tspan fontSize={esGrande ? 15 : 11.5} fontWeight="700">{`LOTE ${lote.numero}`}</tspan>
-        <tspan x={cx} dy={esGrande ? 15 : 11.5} fontSize={esGrande ? 10.5 : 8.5}>
-          {`${SUPERFICIES[lote.numero]} m²`}
-        </tspan>
+      <text key={`et-${lote.id}`} className={claseTexto} x={cx} y={cy + 5} textAnchor="middle" fontSize={esGrande ? 18 : 13} fontWeight="700" style={{ pointerEvents: 'none' }}>
+        {`L${lote.numero}`}
       </text>
     )
   }
@@ -173,18 +175,25 @@ function PlanoParque({ lotesPorId, idSeleccionado, onSeleccionar }) {
     const clases = [
       'plano-lote',
       `plano-lote-${estado}`,
-      idSeleccionado === lote.id ? 'plano-lote-seleccionado' : '',
+      fijada?.id === lote.id ? 'plano-lote-seleccionado' : '',
     ].join(' ')
     const props = {
       className: clases,
-      onClick: () => onSeleccionar(lote.id),
+      onClick: (e) => {
+        e.stopPropagation()
+        alternarFijada(lote, posDesdeEvento(e))
+      },
+      onMouseMove: (e) => setFoco({ id: lote.id, ...posDesdeEvento(e) }),
+      onMouseLeave: () => setFoco(null),
+      onFocus: () => setFoco({ id: lote.id, ...posDesdeLote(lote) }),
+      onBlur: () => setFoco(null),
       tabIndex: 0,
       role: 'button',
-      'aria-label': `Lote ${lote.numero}, ${estado}`,
+      'aria-label': `${lote.id.startsWith('local-') ? `Local A${lote.numero}` : `Lote ${lote.numero}`}, ${estado}`,
       onKeyDown: (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
-          onSeleccionar(lote.id)
+          alternarFijada(lote, posDesdeLote(lote))
         }
       },
     }
@@ -197,8 +206,18 @@ function PlanoParque({ lotesPorId, idSeleccionado, onSeleccionar }) {
   const lotesConClip = (clipId) => lotes.filter((l) => l.clip === clipId)
   const lotesSinClip = lotes.filter((l) => !l.clip)
 
+  // La burbuja fijada tiene prioridad salvo que se esté hoovereando otro lote
+  const burbuja =
+    fijada && (!foco || foco.id === fijada.id)
+      ? { ...fijada, esFijada: true }
+      : foco
+        ? { ...foco, esFijada: false }
+        : null
+  const datoBurbuja = burbuja ? lotesPorId[burbuja.id] : null
+
   return (
-    <svg className="plano-parque" viewBox="0 0 1190 715" role="group" aria-label="Plano de lotes del parque">
+    <div className="plano-envoltorio" ref={envoltorioRef} onClick={() => setFijada(null)}>
+      <svg className="plano-parque" viewBox="0 0 1190 748" role="group" aria-label="Plano de lotes del parque">
       <defs>
         <clipPath id="clip-manzana-b">
           <rect x="332" y="112" width="262" height="416" rx="36" />
@@ -210,9 +229,6 @@ function PlanoParque({ lotesPorId, idSeleccionado, onSeleccionar }) {
 
       {/* Calles: el polígono oscuro de base */}
       <polygon points={aPuntos(PERIMETRO)} className="plano-calles" />
-
-      {/* Espacio verde (esquina inferior derecha) */}
-      <polygon points="1000,610 1088,592 1091,618 1003,636" className="plano-espacio-verde" />
 
       {/* Lotes */}
       {lotesSinClip.map(renderLote)}
@@ -226,14 +242,13 @@ function PlanoParque({ lotesPorId, idSeleccionado, onSeleccionar }) {
       {/* Etiquetas */}
       {lotes.map(renderEtiqueta)}
 
-      {/* Arbolado */}
-      <g className="plano-arboles">
-        {arboles.map(([x, y], i) => (
-          <circle key={i} cx={x.toFixed(1)} cy={y.toFixed(1)} r="5" />
-        ))}
+      {/* Ruta al pie del predio */}
+      <g className="plano-ruta">
+        <line x1="40" y1="731" x2="1150" y2="632" />
+        <line x1="40" y1="743" x2="1150" y2="644" />
       </g>
 
-      {/* Accesos */}
+      {/* Accesos (sobre el frente que da a la ruta) */}
       <g transform="translate(316, 664) rotate(-6)">
         <rect x="-32" y="-10" width="64" height="20" className="plano-acceso-caja" />
         <text x="0" y="4" textAnchor="middle" className="plano-acceso-texto">ACCESO</text>
@@ -243,13 +258,58 @@ function PlanoParque({ lotesPorId, idSeleccionado, onSeleccionar }) {
         <text x="0" y="4" textAnchor="middle" className="plano-acceso-texto">ACCESO</text>
       </g>
 
-      {/* Norte */}
-      <g transform="translate(1146, 58)">
-        <circle r="17" className="plano-norte-circulo" />
-        <path d="M0,9 L0,-9 M0,-9 L-4,-2 M0,-9 L4,-2" className="plano-norte-flecha" />
-        <text x="0" y="34" textAnchor="middle" className="plano-norte-texto">N</text>
+      {/* Norte: rosa de los vientos con el brazo largo (N) apuntando a la derecha */}
+      <g transform="translate(1130, 58)">
+        <g transform="rotate(90)">
+          <path
+            className="plano-norte-estrella"
+            d="M0,-26 L3.2,-3.2 L15,0 L3.2,3.2 L0,15 L-3.2,3.2 L-15,0 L-3.2,-3.2 Z"
+          />
+          <path
+            className="plano-norte-relleno"
+            d="M0,-26 L3.2,-3.2 L0,0 Z M15,0 L3.2,3.2 L0,0 Z M0,15 L-3.2,3.2 L0,0 Z M-15,0 L-3.2,-3.2 L0,0 Z"
+          />
+        </g>
+        <text x="38" y="4" textAnchor="middle" className="plano-norte-texto">N</text>
       </g>
-    </svg>
+      </svg>
+
+      {/* Burbuja con los datos del lote */}
+      <AnimatePresence>
+        {datoBurbuja && (
+          <motion.div
+            key="burbuja"
+            className={`plano-burbuja${burbuja.esFijada ? ' plano-burbuja-fijada' : ''}`}
+            style={{ left: burbuja.x, top: burbuja.y }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            onClick={(e) => e.stopPropagation()}
+            role="status"
+          >
+            <span className="plano-burbuja-nombre">{datoBurbuja.nombre}</span>
+            {datoBurbuja.superficie && (
+              <span className="plano-burbuja-superficie">{datoBurbuja.superficie}</span>
+            )}
+            <span className={`plano-burbuja-estado plano-burbuja-${datoBurbuja.estado}`}>
+              {datoBurbuja.estado === 'vendido' ? 'Vendido' : 'Disponible'}
+            </span>
+            {datoBurbuja.estado === 'vendido' && datoBurbuja.comprador && (
+              <span className="plano-burbuja-superficie">{datoBurbuja.comprador}</span>
+            )}
+            {burbuja.esFijada && datoBurbuja.estado === 'disponible' && (
+              <Link
+                className="link-texto plano-burbuja-cta"
+                to={`/contacto?lote=${encodeURIComponent(datoBurbuja.nombre)}`}
+              >
+                Consultar
+              </Link>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
 
