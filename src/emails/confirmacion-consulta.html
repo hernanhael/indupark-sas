@@ -1,0 +1,236 @@
+<!--
+  Plantilla de email — confirmación de recepción de consulta.
+  Se envía al cliente apenas completa el formulario de Contacto.
+
+  Uso: pegar este HTML tal cual en el editor de plantillas de EmailJS
+  (o del servicio que se elija) como plantilla "Confirmación al cliente".
+  Variables esperadas ({{variable}}, sintaxis EmailJS): nombre, email,
+  telefono, lote, mensaje, anio. "telefono" y "lote" pueden llegar vacíos
+  si el usuario no los completó — por eso van en filas condicionales
+  simples (si el servicio elegido no soporta condicionales en el HTML,
+  se resuelven armando el string final en enviarConsulta.js antes de
+  enviarlo, y dejando siempre el placeholder con un valor por defecto
+  como "Sin especificar").
+
+  Diseño: misma identidad de marca que el sitio (navy + Archivo/Inter,
+  minimalista, sin cajas ni sombras) pero adaptada a email: fondo claro
+  para legibilidad y compatibilidad con clientes de correo, con una
+  franja superior e inferior en el navy oscuro del sitio a modo de
+  "marco" de marca.
+-->
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="supported-color-schemes" content="light" />
+    <title>Consulta recibida — Indupark SAS</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #eef1f8;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    "
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background-color: #eef1f8; padding: 32px 16px"
+    >
+      <tr>
+        <td align="center">
+          <table
+            role="presentation"
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
+            style="
+              width: 600px;
+              max-width: 100%;
+              background-color: #ffffff;
+              border-radius: 10px;
+              overflow: hidden;
+            "
+          >
+            <!-- Encabezado: franja navy con la marca, igual que el navbar -->
+            <tr>
+              <td style="background-color: #0a1c42; padding: 28px 40px">
+                <span
+                  style="
+                    display: inline-block;
+                    font-family: Arial, sans-serif;
+                    font-weight: 700;
+                    font-size: 18px;
+                    letter-spacing: 0.06em;
+                    color: #ffffff;
+                    text-transform: uppercase;
+                  "
+                >
+                  Indupark SAS
+                </span>
+              </td>
+            </tr>
+
+            <!-- Cuerpo -->
+            <tr>
+              <td style="padding: 40px 40px 8px">
+                <span
+                  style="
+                    display: block;
+                    font-family: Arial, sans-serif;
+                    font-size: 12px;
+                    font-weight: 700;
+                    letter-spacing: 0.12em;
+                    text-transform: uppercase;
+                    color: #6b7a9c;
+                    margin: 0 0 10px;
+                  "
+                >
+                  Consulta recibida
+                </span>
+                <h1
+                  style="
+                    margin: 0 0 20px;
+                    font-family: Arial, sans-serif;
+                    font-size: 24px;
+                    line-height: 1.3;
+                    color: #0a1c42;
+                  "
+                >
+                  Gracias por tu consulta, {{nombre}}
+                </h1>
+                <p
+                  style="
+                    margin: 0 0 28px;
+                    font-size: 15px;
+                    line-height: 1.7;
+                    color: #3b4767;
+                  "
+                >
+                  Recibimos tu mensaje sobre Indupark, el parque logístico y
+                  comercial de Río Chico, Tucumán. Un miembro de nuestro
+                  equipo va a contactarte a la brevedad para responder tu
+                  consulta y coordinar los próximos pasos.
+                </p>
+
+                <!-- Línea divisoria fina, en línea con .titulo-linea del sitio -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="border-top: 2px solid #0a1c42; width: 48px; height: 1px; font-size: 0; line-height: 0;">&nbsp;</td>
+                    <td></td>
+                  </tr>
+                </table>
+
+                <!-- Resumen de la consulta -->
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="margin-top: 28px"
+                >
+                  <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #e5e9f2; font-size: 13px; color: #6b7a9c; width: 140px;">
+                      Nombre
+                    </td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #e5e9f2; font-size: 14px; color: #0a1c42;">
+                      {{nombre}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #e5e9f2; font-size: 13px; color: #6b7a9c;">
+                      Email
+                    </td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #e5e9f2; font-size: 14px; color: #0a1c42;">
+                      {{email}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #e5e9f2; font-size: 13px; color: #6b7a9c;">
+                      Teléfono
+                    </td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #e5e9f2; font-size: 14px; color: #0a1c42;">
+                      {{telefono}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #e5e9f2; font-size: 13px; color: #6b7a9c;">
+                      Lote de interés
+                    </td>
+                    <td style="padding: 10px 0; border-bottom: 1px solid #e5e9f2; font-size: 14px; color: #0a1c42;">
+                      {{lote}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px 0; font-size: 13px; color: #6b7a9c; vertical-align: top;">
+                      Mensaje
+                    </td>
+                    <td style="padding: 10px 0; font-size: 14px; color: #0a1c42; line-height: 1.6;">
+                      {{mensaje}}
+                    </td>
+                  </tr>
+                </table>
+
+                <p
+                  style="
+                    margin: 32px 0 0;
+                    font-size: 13px;
+                    line-height: 1.6;
+                    color: #6b7a9c;
+                  "
+                >
+                  Si algún dato no es correcto, respondé este email y lo
+                  corregimos antes de contactarte.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Pie: misma franja navy oscuro que el Footer del sitio -->
+            <tr>
+              <td style="background-color: #06122e; padding: 28px 40px; text-align: center;">
+                <span
+                  style="
+                    display: block;
+                    font-family: Arial, sans-serif;
+                    font-weight: 700;
+                    font-size: 14px;
+                    letter-spacing: 0.04em;
+                    color: #ffffff;
+                    text-transform: uppercase;
+                  "
+                >
+                  Indupark SAS
+                </span>
+                <span
+                  style="
+                    display: block;
+                    margin-top: 6px;
+                    font-size: 12px;
+                    color: rgba(255, 255, 255, 0.75);
+                  "
+                >
+                  Parque logístico y comercial — Ruta 38, Río Chico, Tucumán
+                </span>
+                <span
+                  style="
+                    display: block;
+                    margin-top: 16px;
+                    font-size: 11px;
+                    color: rgba(255, 255, 255, 0.45);
+                  "
+                >
+                  © {{anio}} Indupark SAS. Todos los derechos reservados.
+                </span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
