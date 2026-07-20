@@ -1,16 +1,12 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useSearchParams } from 'react-router-dom'
 import PageTransition from '../components/PageTransition'
 import Reveal from '../components/Reveal'
 import TituloSeccion from '../components/TituloSeccion'
 import BotonWhatsApp from '../components/BotonWhatsApp'
 import { enviarConsulta } from '../utils/enviarConsulta'
-import lotes from '../data/lotes.json'
 
-const lotesDisponibles = lotes.filter((lote) => lote.estado === 'disponible')
-
-const ESTADO_INICIAL = { nombre: '', email: '', telefono: '', mensaje: '', lote: '' }
+const ESTADO_INICIAL = { nombre: '', email: '', telefono: '', mensaje: '' }
 
 const iconoProps = {
   viewBox: '0 0 24 24',
@@ -42,13 +38,6 @@ const IconoTelefono = () => (
   </svg>
 )
 
-const IconoLote = () => (
-  <svg {...iconoProps}>
-    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-    <circle cx="12" cy="10" r="3" />
-  </svg>
-)
-
 const IconoMensaje = () => (
   <svg {...iconoProps}>
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -56,11 +45,7 @@ const IconoMensaje = () => (
 )
 
 function Contacto() {
-  const [searchParams] = useSearchParams()
-  const [datos, setDatos] = useState(() => ({
-    ...ESTADO_INICIAL,
-    lote: searchParams.get('lote') ?? '',
-  }))
+  const [datos, setDatos] = useState(ESTADO_INICIAL)
   const [envio, setEnvio] = useState('inicial') // inicial | enviando | enviado
 
   const manejarCambio = (evento) => {
@@ -132,21 +117,6 @@ function Contacto() {
                     <span className="campo-fila">
                       <IconoTelefono />
                       <input type="tel" name="telefono" value={datos.telefono} onChange={manejarCambio} />
-                    </span>
-                  </label>
-
-                  <label className="campo">
-                    <span className="campo-etiqueta">Lote de interés</span>
-                    <span className="campo-fila">
-                      <IconoLote />
-                      <select name="lote" value={datos.lote} onChange={manejarCambio}>
-                        <option value="">Sin especificar</option>
-                        {lotesDisponibles.map((lote) => (
-                          <option key={lote.id} value={lote.nombre}>
-                            {lote.nombre}
-                          </option>
-                        ))}
-                      </select>
                     </span>
                   </label>
 

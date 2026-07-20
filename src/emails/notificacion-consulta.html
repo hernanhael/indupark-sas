@@ -1,22 +1,24 @@
 <!--
-  Plantilla de email — confirmación de recepción de consulta.
-  Se envía al cliente apenas completa el formulario de Contacto.
+  Plantilla de email — aviso de consulta nueva.
+  Se envía a Indupark SAS (no al cliente) cada vez que alguien completa
+  el formulario de Contacto, para que el dueño se entere sin tener que
+  revisar el sitio.
 
   Uso: pegar este HTML tal cual en el editor de plantillas de EmailJS
-  (o del servicio que se elija) como plantilla "Confirmación al cliente".
-  Variables esperadas ({{variable}}, sintaxis EmailJS): nombre, email,
-  telefono, mensaje, anio. "telefono" puede llegar vacío si el usuario
-  no lo completó — por eso va en una fila condicional simple (si el
-  servicio elegido no soporta condicionales en el HTML, se resuelve
-  armando el string final en enviarConsulta.js antes de enviarlo, y
-  dejando siempre el placeholder con un valor por defecto como
-  "Sin especificar").
+  como plantilla "Notificación al dueño". En la configuración de esa
+  plantilla (no en este HTML) hay que fijar:
+    - To Email: indupark.riochico@gmail.com
+    - Reply To: {{email}}  (así, al responder este mail, la respuesta
+      va directo al usuario que consultó, no a Indupark)
 
-  Diseño: misma identidad de marca que el sitio (navy + Archivo/Inter,
-  minimalista, sin cajas ni sombras) pero adaptada a email: fondo claro
-  para legibilidad y compatibilidad con clientes de correo, con una
-  franja superior e inferior en el navy oscuro del sitio a modo de
-  "marco" de marca.
+  Variables esperadas ({{variable}}, sintaxis EmailJS): nombre, email,
+  telefono, mensaje, anio — las mismas que arma armarParametrosPlantilla
+  en enviarConsulta.js para la plantilla de confirmación al cliente,
+  así que un solo llamado a esa función sirve para las dos.
+
+  Diseño: misma identidad de marca que confirmacion-consulta.html
+  (franjas navy arriba/abajo, cuerpo claro) pero con copy dirigido al
+  dueño en vez de al cliente.
 -->
 <!doctype html>
 <html lang="es">
@@ -25,7 +27,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light" />
     <meta name="supported-color-schemes" content="light" />
-    <title>Consulta recibida — Indupark SAS</title>
+    <title>Nueva consulta — Indupark SAS</title>
   </head>
   <body
     style="
@@ -91,7 +93,7 @@
                     margin: 0 0 10px;
                   "
                 >
-                  Consulta recibida
+                  Nueva consulta
                 </span>
                 <h1
                   style="
@@ -102,7 +104,7 @@
                     color: #0a1c42;
                   "
                 >
-                  Gracias por tu consulta, {{nombre}}
+                  {{nombre}} escribió desde el sitio
                 </h1>
                 <p
                   style="
@@ -112,10 +114,9 @@
                     color: #3b4767;
                   "
                 >
-                  Recibimos tu mensaje sobre Indupark, el parque logístico y
-                  comercial de Río Chico, Tucumán. Un miembro de nuestro
-                  equipo va a contactarte a la brevedad para responder tu
-                  consulta y coordinar los próximos pasos.
+                  Alguien completó el formulario de Contacto en el sitio de
+                  Indupark. Respondé este email para contestarle
+                  directamente.
                 </p>
 
                 <!-- Línea divisoria fina, en línea con .titulo-linea del sitio -->
@@ -126,7 +127,7 @@
                   </tr>
                 </table>
 
-                <!-- Resumen de la consulta -->
+                <!-- Datos de la consulta -->
                 <table
                   role="presentation"
                   width="100%"
@@ -167,18 +168,6 @@
                     </td>
                   </tr>
                 </table>
-
-                <p
-                  style="
-                    margin: 32px 0 0;
-                    font-size: 13px;
-                    line-height: 1.6;
-                    color: #6b7a9c;
-                  "
-                >
-                  Si algún dato no es correcto, respondé este email y lo
-                  corregimos antes de contactarte.
-                </p>
               </td>
             </tr>
 
@@ -197,16 +186,6 @@
                   "
                 >
                   Indupark SAS
-                </span>
-                <span
-                  style="
-                    display: block;
-                    margin-top: 6px;
-                    font-size: 12px;
-                    color: rgba(255, 255, 255, 0.75);
-                  "
-                >
-                  Parque logístico y comercial — Ruta 38, Río Chico, Tucumán
                 </span>
                 <span
                   style="

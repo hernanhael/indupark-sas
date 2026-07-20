@@ -299,10 +299,7 @@ function PlanoParque({ lotesPorId }) {
               <span className="plano-burbuja-superficie">{datoBurbuja.comprador}</span>
             )}
             {burbuja.esFijada && datoBurbuja.estado === 'disponible' && (
-              <Link
-                className="link-texto plano-burbuja-cta"
-                to={`/contacto?lote=${encodeURIComponent(datoBurbuja.nombre)}`}
-              >
+              <Link className="link-texto plano-burbuja-cta" to="/contacto">
                 Consultar
               </Link>
             )}
