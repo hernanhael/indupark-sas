@@ -70,23 +70,34 @@ function Contacto() {
           </TituloSeccion>
 
           <Reveal>
-            <p className="contacto-intro">
-              Dejanos tus datos y tu consulta: te contactamos a la brevedad para
-              coordinar una visita o resolver cualquier duda sobre el parque.
-            </p>
+            {envio !== 'enviado' && (
+              <p className="contacto-intro">
+                Dejanos tus datos y tu consulta: te contactamos a la brevedad para
+                coordinar una visita o resolver cualquier duda sobre el parque.
+              </p>
+            )}
 
             <AnimatePresence mode="wait">
               {envio === 'enviado' ? (
-                <motion.p
+                <motion.div
                   key="confirmacion"
-                  className="contacto-confirmacion"
+                  className="contacto-tarjeta"
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                 >
-                  Gracias, tu consulta fue enviada. Te vamos a contactar a la brevedad
-                  y te llegará un email de confirmación a la casilla indicada.
-                </motion.p>
+                  <p className="contacto-tarjeta-texto">
+                    Gracias, tu consulta fue enviada. Te vamos a contactar a la brevedad
+                    y te llegará un email de confirmación a la casilla indicada.
+                  </p>
+                  <button
+                    type="button"
+                    className="boton-enviar"
+                    onClick={() => setEnvio('inicial')}
+                  >
+                    Aceptar
+                  </button>
+                </motion.div>
               ) : (
                 <motion.form
                   key="formulario"

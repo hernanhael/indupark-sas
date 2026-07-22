@@ -1,9 +1,6 @@
 import { motion } from 'framer-motion'
 
-// TODO: completar con el número real de WhatsApp de Indupark (formato
-// internacional, sin "+", ej: "5493812345678"). Hasta entonces el botón
-// queda visible pero inerte.
-const WHATSAPP_NUMERO = ''
+const WHATSAPP_NUMERO = '5493813199621'
 const WHATSAPP_MENSAJE = 'Hola, quiero más información sobre Indupark.'
 
 function BotonWhatsApp() {
